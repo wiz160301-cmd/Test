@@ -3,7 +3,9 @@ from enum import Enum
 
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
+import ta.momentum as tam
+import ta.trend as tat
+import ta.volatility as tav
 
 from config import (
     ATR_PERIOD,
@@ -45,22 +47,29 @@ def compute_indicators(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.copy()
 
-    df["rsi"] = ta.rsi(df["close"], length=RSI_PERIOD)
+    # RSI
+    df["rsi"] = tam.RSIIndicator(close=df["close"], window=RSI_PERIOD).rsi()
 
-    macd = ta.macd(df["close"], fast=MACD_FAST, slow=MACD_SLOW, signal=MACD_SIGNAL)
-    hist_col = f"MACDh_{MACD_FAST}_{MACD_SLOW}_{MACD_SIGNAL}"
-    df["macd_hist"] = macd[hist_col] if macd is not None and hist_col in macd.columns else np.nan
+    # MACD
+    macd_ind = tat.MACD(
+        close=df["close"],
+        window_fast=MACD_FAST,
+        window_slow=MACD_SLOW,
+        window_sign=MACD_SIGNAL,
+    )
+    df["macd_hist"] = macd_ind.macd_diff()
 
-    bb = ta.bbands(df["close"], length=BB_PERIOD, std=BB_STD)
-    if bb is not None:
-        df["bb_lower"] = bb[f"BBL_{BB_PERIOD}_{BB_STD}"]
-        df["bb_upper"] = bb[f"BBU_{BB_PERIOD}_{BB_STD}"]
-        df["bb_mid"] = bb[f"BBM_{BB_PERIOD}_{BB_STD}"]
-        df["bb_width"] = df["bb_upper"] - df["bb_lower"]
-    else:
-        df["bb_lower"] = df["bb_upper"] = df["bb_mid"] = df["bb_width"] = np.nan
+    # Bandes de Bollinger
+    bb_ind = tav.BollingerBands(close=df["close"], window=BB_PERIOD, window_dev=BB_STD)
+    df["bb_lower"] = bb_ind.bollinger_lband()
+    df["bb_upper"] = bb_ind.bollinger_hband()
+    df["bb_mid"] = bb_ind.bollinger_mavg()
+    df["bb_width"] = df["bb_upper"] - df["bb_lower"]
 
-    df["atr"] = ta.atr(df["high"], df["low"], df["close"], length=ATR_PERIOD)
+    # ATR
+    df["atr"] = tav.AverageTrueRange(
+        high=df["high"], low=df["low"], close=df["close"], window=ATR_PERIOD
+    ).average_true_range()
 
     return df
 
@@ -68,7 +77,7 @@ def compute_indicators(df: pd.DataFrame) -> pd.DataFrame:
 def _is_high_reactivity(df: pd.DataFrame) -> bool:
     """Vérifie si l'ATR des 48h est supérieur à la médiane globale disponible."""
     if "atr" not in df.columns or df["atr"].isna().all():
-        return True  # pas assez de données → pas de filtre
+        return True
 
     recent_window = min(HIGH_REACTIVITY_CANDLES, len(df))
     recent_atr = df["atr"].iloc[-recent_window:].mean()
@@ -77,7 +86,7 @@ def _is_high_reactivity(df: pd.DataFrame) -> bool:
     if global_median == 0 or np.isnan(global_median):
         return True
 
-    return recent_atr >= global_median * 0.9  # 90% de la médiane globale suffit
+    return float(recent_atr) >= float(global_median) * 0.9
 
 
 def generate_signal(df: pd.DataFrame) -> Signal:
@@ -138,7 +147,7 @@ def generate_signal(df: pd.DataFrame) -> Signal:
             reason=f"LONG: {', '.join(triggers)} + prix≤BB_basse",
         )
 
-    # --- Signal SHORT (ignoré sur spot Binance — retourne HOLD) ---
+    # --- Signal SHORT (ignoré sur spot Binance) ---
     rsi_overbought = rsi > RSI_OVERBOUGHT
     macd_bearish_cross = prev_macd > 0 > macd_hist
     price_at_upper_bb = (
@@ -146,7 +155,6 @@ def generate_signal(df: pd.DataFrame) -> Signal:
     )
 
     if (rsi_overbought or macd_bearish_cross) and price_at_upper_bb:
-        # Short non supporté sur spot → signal informatif uniquement
         triggers = []
         if rsi_overbought:
             triggers.append(f"RSI={rsi:.1f}>{RSI_OVERBOUGHT}")

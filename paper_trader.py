@@ -179,7 +179,14 @@ class PaperTrader:
                 continue
             reason = check_exit_conditions(asdict(trade), current_price)
             if reason:
-                closed_trade = self.close_position(trade.id, current_price, reason)
+                # Utiliser le prix SL/TP exact (simulation d'un ordre limite)
+                if reason == "stop_loss":
+                    exit_price = trade.stop_loss_price
+                elif reason == "take_profit":
+                    exit_price = trade.take_profit_price
+                else:
+                    exit_price = current_price
+                closed_trade = self.close_position(trade.id, exit_price, reason)
                 if closed_trade:
                     closed.append(closed_trade)
         return closed
