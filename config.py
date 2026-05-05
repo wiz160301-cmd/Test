@@ -7,8 +7,16 @@ load_dotenv()
 BINANCE_API_KEY = os.getenv("BINANCE_API_KEY", "")
 BINANCE_SECRET_KEY = os.getenv("BINANCE_SECRET_KEY", "")
 
-# --- Mode paper trading (défaut sécurisé) ---
+# --- Clés API dédiées au testnet Binance (testnet.binance.vision) ---
+BINANCE_TESTNET_API_KEY = os.getenv("BINANCE_TESTNET_API_KEY", "")
+BINANCE_TESTNET_SECRET_KEY = os.getenv("BINANCE_TESTNET_SECRET_KEY", "")
+
+# --- Modes ---
+# PAPER_TRADING=true  → simulation locale (aucun ordre envoyé)
+# TESTNET=true        → ordres réels sur testnet.binance.vision (argent fictif)
+# Les deux à false    → trading réel sur Binance production (argent réel !)
 PAPER_TRADING = os.getenv("PAPER_TRADING", "true").lower() == "true"
+TESTNET = os.getenv("TESTNET", "false").lower() == "true"
 
 # --- Exchange ---
 EXCHANGE_ID = "binance"

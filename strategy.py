@@ -66,10 +66,11 @@ def compute_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df["bb_mid"] = bb_ind.bollinger_mavg()
     df["bb_width"] = df["bb_upper"] - df["bb_lower"]
 
-    # ATR
-    df["atr"] = tav.AverageTrueRange(
+    # ATR (les premières valeurs à 0 sont remplacées par NaN — période de warmup)
+    atr = tav.AverageTrueRange(
         high=df["high"], low=df["low"], close=df["close"], window=ATR_PERIOD
     ).average_true_range()
+    df["atr"] = atr.where(atr > 0, other=np.nan)
 
     return df
 

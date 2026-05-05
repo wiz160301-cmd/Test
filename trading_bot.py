@@ -1,6 +1,10 @@
 """
 Bot de trading algorithmique — scalping/day trading sur Binance via ccxt.
-Fonctionne en paper trading par défaut (PAPER_TRADING=true dans .env).
+
+Modes disponibles (via .env) :
+  PAPER_TRADING=true            → simulation locale, aucun ordre réel
+  TESTNET=true, PAPER_TRADING=false → ordres sur testnet.binance.vision (argent fictif)
+  TESTNET=false, PAPER_TRADING=false → trading réel Binance production (argent réel !)
 """
 
 import asyncio
@@ -61,16 +65,38 @@ class TradingBot:
 
     def _init_exchange(self) -> ccxt.Exchange:
         params: dict = {"enableRateLimit": True}
-        if not config.PAPER_TRADING:
+
+        if config.TESTNET:
+            # Testnet Binance : argent fictif, ordres réels sur testnet.binance.vision
+            if not config.BINANCE_TESTNET_API_KEY or not config.BINANCE_TESTNET_SECRET_KEY:
+                raise ValueError(
+                    "BINANCE_TESTNET_API_KEY et BINANCE_TESTNET_SECRET_KEY requis en mode testnet.\n"
+                    "Obtenez des clés gratuites sur : https://testnet.binance.vision"
+                )
+            params["apiKey"] = config.BINANCE_TESTNET_API_KEY
+            params["secret"] = config.BINANCE_TESTNET_SECRET_KEY
+        elif not config.PAPER_TRADING:
+            # Production : argent réel
             if not config.BINANCE_API_KEY or not config.BINANCE_SECRET_KEY:
                 raise ValueError("BINANCE_API_KEY et BINANCE_SECRET_KEY requis en mode réel")
             params["apiKey"] = config.BINANCE_API_KEY
             params["secret"] = config.BINANCE_SECRET_KEY
 
         exchange = ccxt.binance(params)
+
+        if config.TESTNET:
+            exchange.set_sandbox_mode(True)
+            self.logger.info("Mode TESTNET activé → %s", exchange.urls["api"]["public"][:50])
+
         try:
             exchange.load_markets()
-            self.logger.info("Connexion Binance établie. Mode: %s", "PAPER" if config.PAPER_TRADING else "RÉEL")
+            if config.PAPER_TRADING:
+                mode = "PAPER TRADING (local)"
+            elif config.TESTNET:
+                mode = "TESTNET Binance (argent fictif)"
+            else:
+                mode = "PRODUCTION Binance (argent RÉEL)"
+            self.logger.info("Connexion Binance établie. Mode: %s", mode)
         except ccxt.NetworkError as e:
             self.logger.error("Impossible de se connecter à Binance: %s", e)
             raise
@@ -158,7 +184,10 @@ class TradingBot:
             if config.PAPER_TRADING:
                 self.paper_trader.open_position(params)
             else:
+                # Testnet ou production : ordre réel envoyé à Binance
                 await self._place_live_order(params)
+                # Suivi en paper aussi pour le P&L local
+                self.paper_trader.open_position(params)
 
         # 3. Résumé P&L
         summary = self.paper_trader.get_pnl_summary()
@@ -172,25 +201,33 @@ class TradingBot:
         )
 
     async def _place_live_order(self, params) -> None:
-        """Place un ordre réel sur Binance (mode live uniquement)."""
+        """Place un ordre réel sur Binance (testnet ou production)."""
+        mode_label = "TESTNET" if config.TESTNET else "LIVE"
         try:
             order = self.exchange.create_market_order(
                 symbol=params.symbol,
                 side="buy" if params.direction == "long" else "sell",
                 amount=params.position_size,
             )
+            filled_price = (
+                order.get("average")
+                or order.get("price")
+                or params.entry_price
+            )
             self.logger.info(
-                "[LIVE ORDER] %s %s | id=%s | prix=%.4f | taille=%.6f",
+                "[%s ORDER ✓] %s %s | id=%s | prix_exécuté=%.4f | taille=%.6f | valeur=%.2f USDT",
+                mode_label,
                 params.direction.upper(),
                 params.symbol,
-                order.get("id"),
-                order.get("price") or params.entry_price,
+                order.get("id", "N/A"),
+                filled_price,
                 params.position_size,
+                params.position_value,
             )
         except ccxt.InsufficientFunds as e:
-            self.logger.error("Fonds insuffisants pour %s: %s", params.symbol, e)
+            self.logger.error("[%s] Fonds insuffisants pour %s: %s", mode_label, params.symbol, e)
         except ccxt.ExchangeError as e:
-            self.logger.error("Erreur exchange pour %s: %s", params.symbol, e)
+            self.logger.error("[%s] Erreur exchange pour %s: %s", mode_label, params.symbol, e)
 
     # ------------------------------------------------------------------
     # Démarrage / Arrêt
@@ -198,7 +235,12 @@ class TradingBot:
 
     async def run(self) -> None:
         self.running = True
-        mode = "PAPER TRADING" if config.PAPER_TRADING else "TRADING RÉEL"
+        if config.PAPER_TRADING:
+            mode = "PAPER TRADING (simulation locale)"
+        elif config.TESTNET:
+            mode = "TESTNET Binance — argent fictif"
+        else:
+            mode = "⚠️  PRODUCTION Binance — ARGENT RÉEL"
         self.logger.info("=" * 60)
         self.logger.info("Bot démarré — %s", mode)
         self.logger.info("Capital initial: %.2f USDT", config.INITIAL_CAPITAL)
