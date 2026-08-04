@@ -1,0 +1,22 @@
+{
+  "app.title": "Agente de soporte IT",
+  "session.banner": "Sesión de soporte remoto activa — un asistente de IA y/o un técnico puede ver este diagnóstico",
+  "session.stop": "Detener sesión",
+  "chat.placeholder": "Describe tu problema...",
+  "chat.send": "Enviar",
+  "chat.thinking": "Pensando...",
+  "systemInfo.title": "Información del sistema",
+  "systemInfo.os": "Sistema operativo",
+  "systemInfo.cpu": "Procesador",
+  "systemInfo.memory": "Memoria",
+  "systemInfo.disk": "Disco",
+  "systemInfo.network": "Red",
+  "confirm.title": "¿Confirmar esta acción?",
+  "confirm.riskLevel": "Nivel de riesgo",
+  "confirm.reversible": "Reversible",
+  "confirm.reversible.yes": "Sí",
+  "confirm.reversible.no": "No",
+  "confirm.accept": "Confirmar y ejecutar",
+  "confirm.decline": "Cancelar",
+  "language.label": "Idioma"
+}

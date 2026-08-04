@@ -1,0 +1,22 @@
+{
+  "app.title": "IT Support Agent",
+  "session.banner": "Remote support session active — an AI assistant and/or technician can see this diagnostic",
+  "session.stop": "Stop session",
+  "chat.placeholder": "Describe your issue...",
+  "chat.send": "Send",
+  "chat.thinking": "Thinking...",
+  "systemInfo.title": "System information",
+  "systemInfo.os": "Operating system",
+  "systemInfo.cpu": "CPU",
+  "systemInfo.memory": "Memory",
+  "systemInfo.disk": "Disk",
+  "systemInfo.network": "Network",
+  "confirm.title": "Confirm this action?",
+  "confirm.riskLevel": "Risk level",
+  "confirm.reversible": "Reversible",
+  "confirm.reversible.yes": "Yes",
+  "confirm.reversible.no": "No",
+  "confirm.accept": "Confirm and run",
+  "confirm.decline": "Cancel",
+  "language.label": "Language"
+}
