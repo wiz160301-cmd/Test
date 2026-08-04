@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capacités de la fenêtre principale de l'app support IT",
+  "windows": ["main"],
+  "permissions": ["core:default", "shell:allow-open"]
+}

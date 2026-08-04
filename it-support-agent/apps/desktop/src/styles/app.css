@@ -64,10 +64,39 @@ body {
   min-height: 0;
 }
 
+.app__main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+}
+
 .chat {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  flex: 1;
+}
+
+.remote-control-panel {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.remote-control-panel__error {
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.remote-control-panel__streaming {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.remote-control-panel__debug {
+  font-size: 0.75rem;
+  color: #9ca3af;
 }
 
 .chat__messages {

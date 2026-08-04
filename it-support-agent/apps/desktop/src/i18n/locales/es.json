@@ -18,5 +18,17 @@
   "confirm.reversible.no": "No",
   "confirm.accept": "Confirmar y ejecutar",
   "confirm.decline": "Cancelar",
-  "language.label": "Idioma"
+  "language.label": "Idioma",
+  "remoteControl.title": "Control remoto",
+  "remoteControl.technicianAvailable": "Un técnico está disponible para tomar el control de tu pantalla y ayudarte.",
+  "remoteControl.payAndAuthorize": "Pagar la intervención",
+  "remoteControl.waitingForPayment": "Esperando confirmación del pago...",
+  "remoteControl.checkPaymentStatus": "Ya pagué, comprobar",
+  "remoteControl.consentTitle": "¿Autorizar el control remoto?",
+  "remoteControl.consentText": "El técnico podrá ver y controlar tu pantalla hasta que termines la sesión. Puedes revocar este acceso en cualquier momento.",
+  "remoteControl.authorize": "Autorizar e iniciar",
+  "remoteControl.decline": "Ahora no",
+  "remoteControl.streaming": "Control remoto activo — tu pantalla se está compartiendo",
+  "remoteControl.stop": "Detener el control remoto",
+  "remoteControl.ended": "Sesión de control remoto finalizada"
 }

@@ -91,3 +91,58 @@ export async function getScriptCatalog(): Promise<Record<string, ScriptCatalogEn
   }
   return res.json();
 }
+
+export interface RemoteSession {
+  id: string;
+  status: "pending" | "active" | "ended";
+  consent_given: boolean;
+  technician_user_id: string | null;
+  paid: boolean;
+}
+
+export async function createSession(): Promise<RemoteSession> {
+  const res = await fetch(`${BACKEND_URL}/api/sessions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) throw new Error(`Session creation failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getSession(sessionId: string): Promise<RemoteSession> {
+  const res = await fetch(`${BACKEND_URL}/api/sessions/${sessionId}`);
+  if (!res.ok) throw new Error(`Session fetch failed: ${res.status}`);
+  return res.json();
+}
+
+export async function endSessionOnBackend(sessionId: string): Promise<void> {
+  await fetch(`${BACKEND_URL}/api/sessions/${sessionId}/end`, { method: "POST" });
+}
+
+export async function giveRemoteControlConsent(sessionId: string): Promise<RemoteSession> {
+  const res = await fetch(`${BACKEND_URL}/api/sessions/${sessionId}/consent`, { method: "POST" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail ?? `Consent failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export interface CheckoutResponse {
+  checkout_url: string;
+  payment_id: string;
+}
+
+export async function createCheckoutSession(sessionId: string): Promise<CheckoutResponse> {
+  const res = await fetch(`${BACKEND_URL}/api/payments/checkout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail ?? `Checkout failed: ${res.status}`);
+  }
+  return res.json();
+}

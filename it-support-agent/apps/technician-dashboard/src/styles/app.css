@@ -1,0 +1,139 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+.login-form {
+  max-width: 320px;
+  margin: 4rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.login-form input,
+.login-form button {
+  padding: 0.5rem;
+}
+
+.login-form__error {
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.dashboard {
+  padding: 1rem;
+}
+
+.dashboard__header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.session-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.session-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.session-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.session-list__id {
+  font-family: monospace;
+}
+
+.session-list__empty {
+  color: #9ca3af;
+  border: none;
+}
+
+.session-view {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.session-view__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.session-view__status--connected {
+  color: #16a34a;
+}
+
+.session-view__status--waiting_for_consent,
+.session-view__status--connecting {
+  color: #d97706;
+}
+
+.session-view__status--disconnected {
+  color: #dc2626;
+}
+
+.session-view__body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1rem;
+  padding: 1rem;
+  min-height: 0;
+}
+
+.session-view__body video {
+  width: 100%;
+  background: black;
+  border-radius: 8px;
+  outline: none;
+}
+
+.audit-log-viewer {
+  overflow-y: auto;
+  font-size: 0.8rem;
+}
+
+.audit-log-viewer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.audit-log-viewer li {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.audit-log-viewer__ts {
+  color: #9ca3af;
+}
+
+.audit-log-viewer__valid {
+  color: #16a34a;
+}
+
+.audit-log-viewer__invalid {
+  color: #dc2626;
+  font-weight: 700;
+}

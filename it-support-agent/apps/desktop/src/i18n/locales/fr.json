@@ -18,5 +18,17 @@
   "confirm.reversible.no": "Non",
   "confirm.accept": "Confirmer et exécuter",
   "confirm.decline": "Annuler",
-  "language.label": "Langue"
+  "language.label": "Langue",
+  "remoteControl.title": "Prise en main à distance",
+  "remoteControl.technicianAvailable": "Un technicien est disponible pour prendre le contrôle de votre écran et vous aider.",
+  "remoteControl.payAndAuthorize": "Payer l'intervention",
+  "remoteControl.waitingForPayment": "En attente de confirmation du paiement...",
+  "remoteControl.checkPaymentStatus": "J'ai payé, vérifier",
+  "remoteControl.consentTitle": "Autoriser la prise en main à distance ?",
+  "remoteControl.consentText": "Le technicien pourra voir et contrôler votre écran jusqu'à l'arrêt de la session. Vous pouvez révoquer cet accès à tout moment.",
+  "remoteControl.authorize": "Autoriser et démarrer",
+  "remoteControl.decline": "Pas maintenant",
+  "remoteControl.streaming": "Prise en main à distance active — votre écran est partagé",
+  "remoteControl.stop": "Arrêter la prise en main à distance",
+  "remoteControl.ended": "Session de prise en main à distance terminée"
 }

@@ -18,5 +18,17 @@
   "confirm.reversible.no": "No",
   "confirm.accept": "Confirm and run",
   "confirm.decline": "Cancel",
-  "language.label": "Language"
+  "language.label": "Language",
+  "remoteControl.title": "Remote control",
+  "remoteControl.technicianAvailable": "A technician is available to take control of your screen to help you.",
+  "remoteControl.payAndAuthorize": "Pay for intervention",
+  "remoteControl.waitingForPayment": "Waiting for payment confirmation...",
+  "remoteControl.checkPaymentStatus": "I've paid, check status",
+  "remoteControl.consentTitle": "Allow remote control?",
+  "remoteControl.consentText": "The technician will be able to see and control your screen until you stop the session. You can revoke this at any time.",
+  "remoteControl.authorize": "Authorize and start",
+  "remoteControl.decline": "Not now",
+  "remoteControl.streaming": "Remote control active — your screen is being shared",
+  "remoteControl.stop": "Stop remote control",
+  "remoteControl.ended": "Remote control session ended"
 }
